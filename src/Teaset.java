@@ -34,7 +34,7 @@ public class Teaset {
 
     public void bestSolutionRecursion() {
         long startTime = System.currentTimeMillis();
-        Set result = bestSolutionRecursion(size, 1, Math.min(size, profit.length), new Set(0, ""));
+        Set result = bestSolutionRecursion(size, 1, Math.min(size, profit.length - 1), new Set(0, ""));
         System.out.println("Recursion approach: " + result);
         long endTime = System.currentTimeMillis();
         System.out.println("Recursion approach: completed in " + (endTime - startTime) + " milliseconds");
@@ -55,7 +55,7 @@ public class Teaset {
             return set;
         }
         else for (int i = lowestSize; i <= Math.min(highestSize, amt); i++) {
-            Set newSet = bestSolutionRecursion(amt - i, i, highestSize, new Set(set.profit + profit[i - 1], set.sets + " " + i));
+            Set newSet = bestSolutionRecursion(amt - i, i, highestSize, new Set(set.profit + profit[i], set.sets + " " + i));
             //System.out.println("Old " + set + " vs new " + newSet);
             if (newSet.compareTo(biggest) > 0) {
                 //System.out.println("New biggest: " + newSet + " vs old " + biggest + " w last " + set);
@@ -86,7 +86,7 @@ public class Teaset {
            fillTable();
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("Dynamic Programming approach: " + dynamicTable[profit.length - 1][size - 1]);
+        System.out.println("Dynamic Programming approach: " + dynamicTable[profit.length - 1][size]);
         System.out.println("Dynamic Programming approach completed in " + (endTime - startTime) + " milliseconds");
     }
 
