@@ -10,6 +10,7 @@ public class Teaset {
     public Teaset(int size) {
         this.size = size;
         dynamicTable = new Set[profit.length][size + 1];
+        memoizedTable = new Set[profit.length][size + 1];
     }
 
     public void printAll() {
@@ -37,11 +38,12 @@ public class Teaset {
     }
 
     public void bestSolutionRecursion(int highestSize) {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         Set result = bestSolutionRecursion(size, 1, highestSize, new Set(0, ""));
         System.out.println("Recursion approach with largest set " + highestSize + ": " + result);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Recursion approach completed in " + (endTime - startTime) + " milliseconds");
+        long endTime = System.nanoTime();
+        long total = endTime - startTime;
+        System.out.println("Recursion approach completed in " + total + " nanoseconds, " + total / 1000 + " milliseconds");
     }
 
     public Set bestSolutionRecursion(int amt, int lowestSize, int highestSize, Set set) {
@@ -60,19 +62,64 @@ public class Teaset {
         return biggest;
     }
 
-    public int bestSolutionMemoizing() {
+    public void bestSolutionMemoizing() {
         long startTime = System.currentTimeMillis();
 
+        Set result = bestSolutionMemoizing(profit.length - 1, size);
+
         long endTime = System.currentTimeMillis();
-        System.out.println("Recursion approach: completed in " + (endTime - startTime) + " milliseconds");
-        return 0;
+        System.out.println("Memoizing approach result: " + result);
+        System.out.println("Memoizing approach completed in " + (endTime - startTime) + " milliseconds");
     }
 
-    public int bestSolutionMemoizing(int itemSize, int amt) {
-        if (memoizedTable[itemSize][amt].profit > 0) {
-            return memoizedTable[itemSize][amt].profit;
+    public Set bestSolutionMemoizing(int largestSetSize, int amtLeft) {
+        if (largestSetSize < 0 || amtLeft < 0 || amtLeft > size) {
+            return null;
         }
-        else return bestSolutionMemoizing();
+        else if (!(memoizedTable[largestSetSize][amtLeft] == null)) {
+            return memoizedTable[largestSetSize][amtLeft];
+        }
+        else if (amtLeft == 0 || largestSetSize == 0) {
+           Set newSet = new Set(0, "");
+           memoizedTable[largestSetSize][amtLeft] = newSet;
+           return newSet;
+        }
+        else if (largestSetSize > amtLeft) {
+            return bestSolutionMemoizing(largestSetSize - 1, amtLeft);
+        }
+        else {
+            Set useLargestSet = bestSolutionMemoizing(largestSetSize, amtLeft - largestSetSize);
+            Set dontUseSet = bestSolutionMemoizing(largestSetSize - 1, amtLeft);
+            Set newSet;
+            if (useLargestSet.profit + profit[largestSetSize] > dontUseSet.profit) {
+                newSet = new Set(useLargestSet.profit + profit[largestSetSize], useLargestSet.sets + " " + largestSetSize);
+            }
+            else {
+                newSet = new Set(dontUseSet.profit, dontUseSet.sets);
+            }
+            memoizedTable[largestSetSize][amtLeft] = newSet;
+            return memoizedTable[largestSetSize][amtLeft];
+        }
+    }
+
+    public void printMemoizingTable() {
+        for (int i = 0; i < memoizedTable.length; i++) {
+            for (int j = 0; j < memoizedTable[i].length; j++) {
+                if (i == 0) {
+                    System.out.print(j + "\t");
+                }
+                else if (j == 0) {
+                    System.out.print(i + "\t");
+                }
+                else if (memoizedTable[i][j] == null) {
+                    System.out.print("--\t");
+                }
+                else {
+                    System.out.print(memoizedTable[i][j].profit + "\t");
+                }
+            }
+            System.out.println();
+        }
     }
 
     public void bestSolutionDynamic() {
@@ -135,7 +182,7 @@ public class Teaset {
         System.out.println("Testing print with half the set:");
         teacups1.printAll(5, "", 1);
         System.out.println();
-        //teacups1.bestSolutionDynamic();
+        teacups1.bestSolutionDynamic();
         //teacups1.bestSolutionMemoizing();
 
         System.out.println("Testing default 10 items");
@@ -152,12 +199,15 @@ public class Teaset {
         Teaset teacups3 = new Teaset(5);
         teacups3.printAll();
         teacups3.bestSolutionRecursion(3);
-        //teacups3.bestSolutionDynamic();
+        teacups3.bestSolutionDynamic();
+        teacups3.bestSolutionMemoizing();
+        teacups3.printMemoizingTable();
 
         System.out.println();
         System.out.println("Testing a large set - 100 teacups");
         Teaset teacups4 = new Teaset(50);
         teacups4.bestSolutionDynamic();
         teacups4.bestSolutionRecursion();
+        teacups4.bestSolutionMemoizing();
     }
 }
