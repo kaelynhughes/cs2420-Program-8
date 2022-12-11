@@ -29,11 +29,12 @@ public class Teaset {
     }
 
     public void bestSolutionRecursion() {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         Set result = bestSolutionRecursion(size, 1, Math.min(size, profit.length - 1), new Set(0, ""));
         System.out.println("Recursion approach: " + result);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Recursion approach: completed in " + (endTime - startTime) + " milliseconds");
+        long endTime = System.nanoTime();
+        long total = endTime - startTime;
+        System.out.println("Recursion approach completed in " + total + " nanoseconds, " + total / 100000 + " milliseconds");
         System.out.println();
     }
 
@@ -43,7 +44,7 @@ public class Teaset {
         System.out.println("Recursion approach with largest set " + highestSize + ": " + result);
         long endTime = System.nanoTime();
         long total = endTime - startTime;
-        System.out.println("Recursion approach completed in " + total + " nanoseconds, " + total / 1000 + " milliseconds");
+        System.out.println("Recursion approach completed in " + total + " nanoseconds, " + total / 100000 + " milliseconds");
     }
 
     public Set bestSolutionRecursion(int amt, int lowestSize, int highestSize, Set set) {
@@ -63,13 +64,14 @@ public class Teaset {
     }
 
     public void bestSolutionMemoizing() {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
 
         Set result = bestSolutionMemoizing(profit.length - 1, size);
 
-        long endTime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
+        long total = endTime - startTime;
         System.out.println("Memoizing approach result: " + result);
-        System.out.println("Memoizing approach completed in " + (endTime - startTime) + " milliseconds");
+        System.out.println("Memoizing approach completed in " + total + " nanoseconds, " + total / 100000 + " milliseconds");
     }
 
     public Set bestSolutionMemoizing(int largestSetSize, int amtLeft) {
@@ -123,13 +125,14 @@ public class Teaset {
     }
 
     public void bestSolutionDynamic() {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         if (dynamicTable[profit.length - 1][Math.min(size, dynamicTable.length) - 1] == null) {
            fillTable();
         }
-        long endTime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
+        long total = endTime - startTime;
         System.out.println("Dynamic Programming approach: " + dynamicTable[profit.length - 1][size]);
-        System.out.println("Dynamic Programming approach completed in " + (endTime - startTime) + " milliseconds");
+        System.out.println("Dynamic Programming approach completed in " + total + " nanoseconds, " + total / 100000 + " milliseconds");
     }
 
     public void printDynamicTable() {
@@ -183,29 +186,32 @@ public class Teaset {
         teacups1.printAll(5, "", 1);
         System.out.println();
         teacups1.bestSolutionDynamic();
-        //teacups1.bestSolutionMemoizing();
+        teacups1.bestSolutionRecursion();
+        teacups1.bestSolutionMemoizing();
 
         System.out.println("Testing default 10 items");
         Teaset teacups2 = new Teaset();
         teacups2.printAll();
-        teacups2.bestSolutionRecursion();
         teacups2.bestSolutionDynamic();
         System.out.println("Table for dynamic programming method: ");
         teacups2.printDynamicTable();
-        //teacups2.bestSolutionMemoizing();
+        teacups2.bestSolutionRecursion();
+        teacups2.bestSolutionMemoizing();
 
         System.out.println();
         System.out.println("Testing a set of 5");
         Teaset teacups3 = new Teaset(5);
         teacups3.printAll();
-        teacups3.bestSolutionRecursion(3);
         teacups3.bestSolutionDynamic();
+        System.out.println("Testing recursion method when given a cap on set size: ");
+        teacups3.bestSolutionRecursion(3);
         teacups3.bestSolutionMemoizing();
+        System.out.println("Table for memoizing method:");
         teacups3.printMemoizingTable();
 
         System.out.println();
         System.out.println("Testing a large set - 100 teacups");
-        Teaset teacups4 = new Teaset(50);
+        Teaset teacups4 = new Teaset(100);
         teacups4.bestSolutionDynamic();
         teacups4.bestSolutionRecursion();
         teacups4.bestSolutionMemoizing();
