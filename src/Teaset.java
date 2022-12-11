@@ -10,11 +10,6 @@ public class Teaset {
     public Teaset(int size) {
         this.size = size;
         dynamicTable = new Set[profit.length][size + 1];
-//        for (int i = 0; i < size; i++) {
-//            for (int j = 0; j < profit.length; j++) {
-//                dynamicTable[i][j] = new Set(0, "");
-//            }
-//        }
     }
 
     public void printAll() {
@@ -109,9 +104,7 @@ public class Teaset {
 
     private void fillTable() {
         for (int i = 0; i < dynamicTable.length; i++) {
-            //System.out.print("! ");
             for (int j = 0; j < dynamicTable[i].length; j++) {
-                //System.out.print("@ ");
                 // if we're on the top row, don't worry about checking
                 if (i == 0 || j == 0) {
                     dynamicTable[i][j] = new Set(0, "");
@@ -121,44 +114,21 @@ public class Teaset {
                     dynamicTable[i][j] = new Set(old.profit, old.sets);
                 }
                 else {
-//                    System.out.print("# ");
                     int bestProfit = dynamicTable[i - 1][j].profit;
-                    //System.out.println("Spot [" + i + "][" + j + "]");
-                    //System.out.println("option 1: [" + (i-1) + "]["+ j + "] " + dynamicTable[i-1][j].profit);
                     String setList = "";
                     // increment through available coin sizes & find the one that gives the highest profit
-//                    System.out.print("$ ");
                     for (int k = 1; k <= i; k++) {
-//                        System.out.print("% ");
                         int testProfit = dynamicTable[i][j - k].profit + profit[k];
-                        //System.out.println("option 2: [" + i + "]["+ (j-k) + "] " + dynamicTable[i][j-k].profit + " + " + profit[k]);
-//                        System.out.print("^ ");
                         if (testProfit >= bestProfit) {
                             bestProfit = testProfit;
                             setList = dynamicTable[i][j - k].sets + " " + k;
                         }
                     }
-//                    System.out.print("& ");
                     dynamicTable[i][j] = new Set(bestProfit, setList);
                 }
             }
         }
     }
-
-    public int bestSolutionDynamic(int setSize) {
-
-        System.out.println("TODO: dynamic programming approach");
-        int[][] solutions = new int[setSize][setSize];
-        for (int i = 0; i < setSize; i++) {
-            for (int j = 0; j < setSize; j++) {
-
-            }
-        }
-
-
-        return solutions[1][1];
-    }
-
 
     public static void main(String[] args) {
         Teaset teacups1 = new Teaset();
